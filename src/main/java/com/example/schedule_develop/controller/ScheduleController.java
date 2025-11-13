@@ -3,7 +3,10 @@ package com.example.schedule_develop.controller;
 import com.example.schedule_develop.dto.ScheduleReq.ScheduleCreateReq;
 import com.example.schedule_develop.dto.ScheduleReq.SchedulePutReq;
 import com.example.schedule_develop.dto.common.CommonResponse;
+import com.example.schedule_develop.dto.common.GlobalResponse;
 import com.example.schedule_develop.service.ScheduleService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,13 +21,25 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/schedule_Develop/schedules")
-    public ResponseEntity<CommonResponse> postApi(@RequestBody ScheduleCreateReq req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(HttpStatus.CREATED.value(),"postResponse",req));
+    public ResponseEntity<GlobalResponse<?>> postApi(@RequestBody ScheduleCreateReq req, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), "session fail"));
+        } else {
+            Long id = (Long) session.getAttribute("LOGIN_USER");
+            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(HttpStatus.CREATED.value(),"postResponse", req, id));
+        }
     }
 
     @GetMapping("/schedule_Develop/schedules")
-    public ResponseEntity<CommonResponse> getApi() {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll(HttpStatus.OK.value(),"getResponse"));
+    public ResponseEntity<GlobalResponse<?>> getApi(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), "session fail"));
+        } else {
+            Long id = (Long) session.getAttribute("LOGIN_USER");
+            return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll(HttpStatus.OK.value(),"getResponse", id));
+        }
     }
 
     @GetMapping("/schedule_Develop/schedules/{scheduleID}")

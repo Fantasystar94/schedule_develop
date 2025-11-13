@@ -2,16 +2,15 @@ package com.example.schedule_develop.service;
 
 import com.example.schedule_develop.dto.UserReq.UserCreateReq;
 import com.example.schedule_develop.dto.UserReq.UserPutReq;
+import com.example.schedule_develop.dto.UserRes.UserDelRes;
 import com.example.schedule_develop.dto.UserRes.UserResData;
-import com.example.schedule_develop.dto.common.CommonResponse;
 import com.example.schedule_develop.dto.common.GlobalResponse;
-import com.example.schedule_develop.entity.UserEntity;
+import com.example.schedule_develop.entity.User;
 import com.example.schedule_develop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +18,14 @@ public class UserService {
     private final UserRepository userRepo;
 
     public GlobalResponse<UserResData> create(int status, String message, UserCreateReq req) {
-        UserEntity userEntity = new UserEntity(req.getUserName(),req.getEmail(),req.getPassword());
-        userRepo.save(userEntity);
+        User user = new User(req.getUserName(),req.getEmail(),req.getPassword());
+        userRepo.save(user);
         UserResData data = new UserResData(
-                userEntity.getId(),
-                userEntity.getUserName(),
-                userEntity.getEmail(),
-                userEntity.getCreatedAt(),
-                userEntity.getUpdatedAt()
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
         return new GlobalResponse<>(status, message, data);
     }
@@ -46,7 +45,7 @@ public class UserService {
 
     public GlobalResponse<UserResData> findDetail(int status, String message, Long id) {
 
-        UserEntity user = userRepo.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
+        User user = userRepo.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
 
         UserResData data = new UserResData(
                 user.getId(),
@@ -60,7 +59,7 @@ public class UserService {
 
     public GlobalResponse<UserResData> put(int status, String message, Long id, UserPutReq req) {
 
-        UserEntity user = userRepo.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
+        User user = userRepo.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
 
         user.update(req.getUserName(), req.getEmail());
         System.out.println(req.getUserName());
@@ -75,12 +74,22 @@ public class UserService {
         return new GlobalResponse<>(status, message, data);
     }
 
-    public GlobalResponse<UserResData> delete(int status, String message, Long id) {
-        UserEntity user = userRepo.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
+    public GlobalResponse<UserDelRes> delete(int status, String message, Long id) {
+        User user = userRepo.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
         if(userRepo.existsById(user.getId())) {
             userRepo.deleteById(user.getId());
         }
+        UserDelRes data = new UserDelRes(user.getId(),user.getUserName());
+        return new GlobalResponse<>(status, message, data);
+    }
 
-        return new GlobalResponse(status, message, "삭제되었습니다.");
+    public User login(String email, String password) {
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new IllegalStateException("이메일 혹은 비밀번호가 일치하지 않습니다."));
+
+        if(!user.getPassword().equals(password)) {
+            throw new IllegalStateException("이메일 혹은 비밀번호가 일치하지 않습니다.");
+        }
+
+        return user;
     }
 }

@@ -22,9 +22,5 @@ public class UserResData {
         this.updatedAt = updatedAt;
     }
 
-    public UserResData(Long id, String userName) {
-        this.id = id;
-        this.userName = userName;
-    }
 
 }

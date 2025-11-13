@@ -11,12 +11,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name = "user")
-public class UserEntity extends BaseDateEntity {
+public class User extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ScheduleEntity> schedules = new ArrayList<>();
+    private List<Schedule> schedules = new ArrayList<>();
     @Column(nullable = false)
     private String userName;
     @Column(nullable = false)
@@ -24,7 +24,7 @@ public class UserEntity extends BaseDateEntity {
     @Column(nullable = false)
     private String password;
 
-    public UserEntity(String userName, String email, String password) {
+    public User(String userName, String email, String password) {
         super();
         this.userName = userName;
         this.email = email;
