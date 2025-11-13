@@ -17,7 +17,7 @@ import java.util.List;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepo;
 
-    public ScheduleCreateRes create(int status, String message, ScheduleCreateReq req) {
+    public ScheduleCreateRes<ScheduleResData> create(int status, String message, ScheduleCreateReq req) {
         ScheduleEntity schedule = new ScheduleEntity(req.getUserName(), req.getTitle(), req.getContent());
         scheduleRepo.save(schedule);
         ScheduleResData data = new ScheduleResData(
@@ -28,11 +28,10 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );
-        ScheduleCreateRes scheduleCreateRes = new ScheduleCreateRes(status, message, data);
-        return scheduleCreateRes;
+        return new ScheduleCreateRes<>(status, message, data);
     }
 
-    public ScheduleReadRes findAll(int status, String message) {
+    public ScheduleReadRes<List<ScheduleResData>> findAll(int status, String message) {
 
         List<ScheduleEntity> list = scheduleRepo.findAll();
         List<ScheduleResData> data = new ArrayList<>();
@@ -47,14 +46,13 @@ public class ScheduleService {
             );
             data.add(resData);
         }
-        ScheduleReadRes scheduleReadRes = new ScheduleReadRes(status, message, data);
-        return scheduleReadRes;
+        return new ScheduleReadRes<>(status, message, data);
     }
 
-    public ScheduleReadRes findDetail(int status, String message, Long scheduleID) {
+    public ScheduleReadRes<ScheduleResData> findDetail(int status, String message, Long scheduleID) {
 
         ScheduleEntity schedule = scheduleRepo.findById(scheduleID).orElseThrow(() ->
-                new IllegalStateException(message)
+                new IllegalStateException("id를 찾을 수 없습니다.")
         );
         ScheduleResData data = new ScheduleResData(
                 schedule.getScheduleId(),
@@ -64,12 +62,11 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );
-        ScheduleReadRes scheduleReadRes = new ScheduleReadRes(status, message, data);
-        return scheduleReadRes;
+        return new ScheduleReadRes<>(status, message, data);
     }
 
     //put(HttpStatus.OK.value(),"putResponse", scheduleID, req))
-    public SchedulePutRes put(int status, String message, Long id ,SchedulePutReq req) {
+    public SchedulePutRes<ScheduleResData> put(int status, String message, Long id ,SchedulePutReq req) {
 
         ScheduleEntity schedule = scheduleRepo.findById(id).orElseThrow(() ->
                 new IllegalStateException(message)
@@ -78,14 +75,14 @@ public class ScheduleService {
         schedule.update(req.getTitle(), req.getContent());
         scheduleRepo.save(schedule);
         ScheduleResData data = new ScheduleResData(
-                schedule.getScheduleId(),
-                schedule.getUserName(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getCreatedAt(),
-                schedule.getUpdatedAt()
+            schedule.getScheduleId(),
+            schedule.getUserName(),
+            schedule.getTitle(),
+            schedule.getContent(),
+            schedule.getCreatedAt(),
+            schedule.getUpdatedAt()
         );
-        return new SchedulePutRes(status, message, data);
+        return new SchedulePutRes<>(status, message, data);
     }
 
     public ScheduleDelRes delete(int status, String message, Long id) {
@@ -97,4 +94,5 @@ public class ScheduleService {
         }
         return new ScheduleDelRes(status, message);
     }
+
 }

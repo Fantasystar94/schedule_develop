@@ -5,11 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class SchedulePutRes<T> extends CommonResponse {
-
     private final T data;
 
     public SchedulePutRes(int status, String message, T data) {
-        super(status, message);
+        super (status, message);
         this.data = data;
     }
 

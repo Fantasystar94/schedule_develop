@@ -1,7 +1,6 @@
 package com.example.schedule_develop.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "schedule")
 public class ScheduleEntity extends BaseDateEntity {
     @Id
@@ -21,6 +19,10 @@ public class ScheduleEntity extends BaseDateEntity {
     private String title;
     @Column(nullable = false, length = 255)
     private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false)
+    private UserEntity user;
+
 
     public ScheduleEntity(String userName, String title, String content) {
         super();
@@ -33,6 +35,5 @@ public class ScheduleEntity extends BaseDateEntity {
         this.title = title;
         this.content = content;
     }
-
 
 }

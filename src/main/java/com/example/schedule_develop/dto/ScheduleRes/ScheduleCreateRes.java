@@ -12,7 +12,7 @@ import java.util.*;
 public class ScheduleCreateRes<T> extends CommonResponse {
     private final T data;
     public ScheduleCreateRes(int status, String message, T data) {
-        super(status, message);
+        super (status, message);
         this.data = data;
     }
 }

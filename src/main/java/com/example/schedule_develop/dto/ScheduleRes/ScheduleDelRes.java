@@ -11,6 +11,6 @@ import org.hibernate.mapping.Collection;
 public class ScheduleDelRes extends CommonResponse {
 
     public ScheduleDelRes(int status, String message) {
-        super(status, message);
+        super (status, message);
     }
 }

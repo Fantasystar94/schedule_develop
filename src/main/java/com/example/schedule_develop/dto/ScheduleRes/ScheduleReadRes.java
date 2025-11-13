@@ -8,7 +8,7 @@ public class ScheduleReadRes<T> extends CommonResponse {
     private final T data;
 
     public ScheduleReadRes(int status, String message, T data) {
-        super(status, message);
+        super (status, message);
         this.data = data;
     }
 }
