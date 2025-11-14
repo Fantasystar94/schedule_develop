@@ -54,18 +54,10 @@ public class UserController {
     public ResponseEntity<GlobalResponse<UserResData>> login(@RequestBody UserLoginReq req, HttpServletRequest request) {
 
         try{
-            User user = userService.login(req.getEmail(),req.getPassword());
+            GlobalResponse<UserResData> user = userService.login(req.getEmail(),req.getPassword());
             HttpSession session = request.getSession(true);
-            session.setAttribute("LOGIN_USER",user.getId());
-            UserResData data = new UserResData(
-                    user.getId(),
-                    user.getUserName(),
-                    user.getEmail(),
-                    user.getCreatedAt(),
-                    user.getUpdatedAt()
-            );
-            GlobalResponse<UserResData> res = new GlobalResponse<>(HttpStatus.OK.value(),"loginSuccessResponse",data);
-            return ResponseEntity.status(HttpStatus.OK).body(res);
+            session.setAttribute("LOGIN_USER",user.getData().getId());
+            return ResponseEntity.status(HttpStatus.OK).body(user);
         } catch (IllegalStateException e) {
             GlobalResponse<UserResData> error = new GlobalResponse<>(HttpStatus.UNAUTHORIZED.value(),e.getMessage(),null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);

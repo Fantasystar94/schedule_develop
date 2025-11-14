@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "comment")
 @NoArgsConstructor
-public class CommentEntity extends BaseDateEntity{
+public class Comment extends BaseDateEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
@@ -18,7 +18,7 @@ public class CommentEntity extends BaseDateEntity{
     @JoinColumn(name="schedule_id",nullable = false)
     private Schedule schedule;
 
-    public CommentEntity(String content) {
+    public Comment(String content) {
         super();
         this.content = content;
     }

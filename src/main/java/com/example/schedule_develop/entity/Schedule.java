@@ -20,25 +20,26 @@ public class Schedule extends BaseDateEntity {
     private String userName;
     @Column(nullable = false, length = 50)
     private String title;
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String content;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false) // optioanl = false => null일수 없다.
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentEntity> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
-    public Schedule(String userName, String title, String content, User user) {
+    public Schedule(String title, String content, User user) {
         super();
-        this.userName = userName;
+        this.userName = user.getUserName();
         this.title = title;
         this.content = content;
         this.user = user;
     }
 
-    public void update (String title, String content) {
+    public void update (String title, String content,User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
 }

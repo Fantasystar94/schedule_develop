@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class ScheduleCreateReq {
-    private String userName;
     private String title;
     private String content;
 }

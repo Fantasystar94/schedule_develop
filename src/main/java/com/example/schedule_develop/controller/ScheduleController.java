@@ -2,6 +2,7 @@ package com.example.schedule_develop.controller;
 
 import com.example.schedule_develop.dto.ScheduleReq.ScheduleCreateReq;
 import com.example.schedule_develop.dto.ScheduleReq.SchedulePutReq;
+import com.example.schedule_develop.dto.ScheduleRes.ScheduleResData;
 import com.example.schedule_develop.dto.common.CommonResponse;
 import com.example.schedule_develop.dto.common.GlobalResponse;
 import com.example.schedule_develop.service.ScheduleService;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -32,28 +35,28 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedule_Develop/schedules")
-    public ResponseEntity<GlobalResponse<?>> getApi(HttpServletRequest request) {
+    public ResponseEntity<GlobalResponse<List<ScheduleResData>>> getApi() {
+            return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll(HttpStatus.OK.value(),"getResponse"));
+    }
+
+    @GetMapping("/schedule_Develop/schedules/{scheduleID}")
+    public ResponseEntity<GlobalResponse<?>> getApiDetail(@PathVariable(required = false) Long scheduleID) {
+            return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findDetail(HttpStatus.OK.value(),"getResponse",scheduleID));
+    }
+
+    @PutMapping("/schedule_Develop/schedules/{scheduleID}")
+    public ResponseEntity<GlobalResponse<?>> putApi(@PathVariable Long scheduleID, @RequestBody SchedulePutReq req,HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if(session == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), "session fail"));
         } else {
             Long id = (Long) session.getAttribute("LOGIN_USER");
-            return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll(HttpStatus.OK.value(),"getResponse", id));
+            return ResponseEntity.status(HttpStatus.OK).body(scheduleService.put(HttpStatus.OK.value(),"putResponse", scheduleID, id, req));
         }
     }
 
-    @GetMapping("/schedule_Develop/schedules/{scheduleID}")
-    public ResponseEntity<CommonResponse> getApiDetail(@PathVariable(required = false) Long scheduleID) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findDetail(HttpStatus.OK.value(),"getDetailResponse", scheduleID));
-    }
-
-    @PutMapping("/schedule_Develop/schedules/{scheduleID}")
-    public ResponseEntity<CommonResponse> putApi(@PathVariable Long scheduleID, @RequestBody SchedulePutReq req) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.put(HttpStatus.OK.value(),"putResponse", scheduleID, req));
-    }
-
     @DeleteMapping("/schedule_Develop/schedules/{scheduleID}")
-    public ResponseEntity<CommonResponse> deleteApi(@PathVariable Long scheduleID) {
+    public ResponseEntity<GlobalResponse<Void>> deleteApi(@PathVariable Long scheduleID) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.delete(HttpStatus.NO_CONTENT.value(),"DeleteResponse", scheduleID));
     }
 

@@ -22,9 +22,10 @@ public class ScheduleService {
 
     public GlobalResponse<ScheduleResData> create(int status, String message, ScheduleCreateReq req, Long id) {
         //user id 받아서 => userEntity에서 findById() => 거기에 있는 scheduleEntity 에다가 받아온 내용을 집어넣는거죠.
-        User user = userRepository.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
-        Schedule schedule = new Schedule(req.getUserName(), req.getTitle(), req.getContent(), user);
+        User user = userRepository.findById(id).orElseThrow(()-> new IllegalStateException(message));
+        Schedule schedule = new Schedule(req.getTitle(), req.getContent(), user);
         scheduleRepository.save(schedule);
+
         ScheduleResData data = new ScheduleResData(
                 schedule.getScheduleId(),
                 schedule.getUserName(),
@@ -33,29 +34,29 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );
-        return new GlobalResponse<>(status, message, data);
+        return GlobalResponse.success(status, message, data);
     }
 
-    public GlobalResponse<List<ScheduleResData>> findAll(int status, String message, Long id) {
+    public GlobalResponse<List<ScheduleResData>> findAll(int status, String message) {
 
         List<Schedule> list = scheduleRepository.findAll();
+
         List<ScheduleResData> data = new ArrayList<>();
         for (Schedule schedule : list) {
             ScheduleResData resData = new ScheduleResData(
-                    schedule.getScheduleId(),
-                    schedule.getUserName(),
-                    schedule.getTitle(),
-                    schedule.getContent(),
-                    schedule.getCreatedAt(),
-                    schedule.getUpdatedAt()
+                schedule.getScheduleId(),
+                schedule.getUserName(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getUpdatedAt()
             );
-            data.add(resData);
+                data.add(resData);
         }
-        return new GlobalResponse<>(status, message, data);
+        return GlobalResponse.success(status, message, data);
     }
 
-    public ScheduleReadRes<ScheduleResData> findDetail(int status, String message, Long scheduleID) {
-
+    public GlobalResponse<ScheduleResData> findDetail(int status, String message, Long scheduleID) {
         Schedule schedule = scheduleRepository.findById(scheduleID).orElseThrow(() ->
                 new IllegalStateException("id를 찾을 수 없습니다.")
         );
@@ -67,17 +68,16 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );
-        return new ScheduleReadRes<>(status, message, data);
+        return GlobalResponse.success(status, message, data);
     }
 
-    //put(HttpStatus.OK.value(),"putResponse", scheduleID, req))
-    public SchedulePutRes<ScheduleResData> put(int status, String message, Long id ,SchedulePutReq req) {
-
-        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() ->
+    public GlobalResponse<ScheduleResData> put(int status, String message, Long scheduleID ,Long UserId,SchedulePutReq req) {
+        User user = userRepository.findById(UserId).orElseThrow(()-> new IllegalStateException(message));
+        Schedule schedule = scheduleRepository.findById(scheduleID).orElseThrow(() ->
                 new IllegalStateException(message)
         );
 
-        schedule.update(req.getTitle(), req.getContent());
+        schedule.update(req.getTitle(), req.getContent(), user);
         scheduleRepository.save(schedule);
         ScheduleResData data = new ScheduleResData(
             schedule.getScheduleId(),
@@ -87,21 +87,21 @@ public class ScheduleService {
             schedule.getCreatedAt(),
             schedule.getUpdatedAt()
         );
-        return new SchedulePutRes<>(status, message, data);
+        return GlobalResponse.success(status, message, data);
     }
 
-    public ScheduleDelRes delete(int status, String message, Long id) {
+    public GlobalResponse<Void> delete(int status, String message, Long id) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(() ->
                 new IllegalStateException(message)
         );
         if (scheduleRepository.existsById(schedule.getScheduleId())) {
             scheduleRepository.deleteById(schedule.getScheduleId());
         }
-        return new ScheduleDelRes(status, message);
+        return GlobalResponse.successNodata(status, message);
     }
 
+    //로그인 감지 실패시 공통 기능 C U D 에서 공통사용
     public GlobalResponse<Void> sessionFail(int status, String message) {
-
         return GlobalResponse.fail(status, message);
     }
 }

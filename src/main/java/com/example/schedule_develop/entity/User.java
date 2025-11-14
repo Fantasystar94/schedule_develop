@@ -15,8 +15,6 @@ public class User extends BaseDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Schedule> schedules = new ArrayList<>();
     @Column(nullable = false)
     private String userName;
     @Column(nullable = false)

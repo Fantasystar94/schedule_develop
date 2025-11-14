@@ -8,6 +8,7 @@ import com.example.schedule_develop.dto.common.GlobalResponse;
 import com.example.schedule_develop.entity.User;
 import com.example.schedule_develop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -83,13 +84,19 @@ public class UserService {
         return new GlobalResponse<>(status, message, data);
     }
 
-    public User login(String email, String password) {
+    public GlobalResponse<UserResData> login(String email, String password) {
         User user = userRepo.findByEmail(email).orElseThrow(() -> new IllegalStateException("이메일 혹은 비밀번호가 일치하지 않습니다."));
-
+        UserResData data = new UserResData(
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
         if(!user.getPassword().equals(password)) {
             throw new IllegalStateException("이메일 혹은 비밀번호가 일치하지 않습니다.");
         }
 
-        return user;
+        return new GlobalResponse<>(HttpStatus.OK.value(),"loginSuccessResponse",data);
     }
 }
