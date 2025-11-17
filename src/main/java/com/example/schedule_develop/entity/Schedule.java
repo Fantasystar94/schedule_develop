@@ -36,7 +36,7 @@ public class Schedule extends BaseDateEntity {
         this.user = user;
     }
 
-    public void update (String title, String content,User user) {
+    public void update (String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;

@@ -47,11 +47,12 @@ public class ScheduleController {
     }
 
     @PutMapping("/schedule_Develop/schedules/{scheduleID}")
-    public ResponseEntity<GlobalResponse<?>> putApi(@PathVariable Long scheduleID,@Valid @RequestBody SchedulePutReq req, HttpServletRequest request) {
+    public ResponseEntity<GlobalResponse<?>> putApi(@PathVariable Long scheduleID, @Valid @RequestBody SchedulePutReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), "session fail"));
         } else {
+            System.out.println("login");
             Long id = (Long) session.getAttribute("LOGIN_USER");
             return ResponseEntity.status(HttpStatus.OK).body(scheduleService.put(HttpStatus.OK.value(), "putResponse", scheduleID, id, req));
         }

@@ -63,7 +63,6 @@ public class UserController {
         } catch (IllegalStateException e) {
             GlobalResponse<UserResData> error = new GlobalResponse<>(HttpStatus.UNAUTHORIZED.value(),e.getMessage(),null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
-
         }
     }
 

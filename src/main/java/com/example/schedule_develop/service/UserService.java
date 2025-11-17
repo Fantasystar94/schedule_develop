@@ -1,5 +1,6 @@
 package com.example.schedule_develop.service;
 
+import com.example.schedule_develop.config.UserNotFoundException;
 import com.example.schedule_develop.dto.ScheduleRes.ScheduleResData;
 import com.example.schedule_develop.dto.UserReq.UserCreateReq;
 import com.example.schedule_develop.dto.UserReq.UserPutReq;
@@ -52,7 +53,7 @@ public class UserService {
 
     public GlobalResponse<UserResData> findDetail(int status, String message, Long id) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("없는 유저 아이디 입니다.")); //예외 발생부분.
 
         UserResData data = new UserResData(
                 user.getId(),
@@ -66,7 +67,7 @@ public class UserService {
 
     public GlobalResponse<UserResData> put(int status, String message, Long id, UserPutReq req) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("없는 유저 아이디 입니다."));
 
         user.update(req.getUserName(), req.getEmail());
         System.out.println(req.getUserName());
@@ -82,7 +83,7 @@ public class UserService {
     }
 
     public GlobalResponse<UserDelRes> delete(int status, String message, Long id) {
-        User user = userRepository.findById(id).orElseThrow(()-> new IllegalStateException("없는 아이디"));
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("없는 유저 아이디 입니다."));
         if(userRepository.existsById(user.getId())) {
             userRepository.deleteById(user.getId());
         }
@@ -91,7 +92,7 @@ public class UserService {
     }
 
     public GlobalResponse<UserResData> login(String email, String password) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalStateException("이메일 혹은 비밀번호가 일치하지 않습니다."));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("이메일 혹은 비밀번호가 일치하지 않습니다."));
         UserResData data = new UserResData(
                 user.getId(),
                 user.getUserName(),
@@ -100,7 +101,7 @@ public class UserService {
                 user.getUpdatedAt()
         );
         if(!user.getPassword().equals(password)) {
-            throw new IllegalStateException("이메일 혹은 비밀번호가 일치하지 않습니다.");
+            throw new UserNotFoundException("이메일 혹은 비밀번호가 일치하지 않습니다.");
         }
 
         return new GlobalResponse<>(HttpStatus.OK.value(),"loginSuccessResponse",data);

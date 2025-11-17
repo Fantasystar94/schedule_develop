@@ -10,8 +10,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserCreateReq {
     @NotBlank
-    @Min(4)
     public String userName;
+    @NotBlank
     @Email
     public String email;
     @NotBlank
