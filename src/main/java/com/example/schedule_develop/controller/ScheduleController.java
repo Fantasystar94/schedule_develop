@@ -3,7 +3,6 @@ package com.example.schedule_develop.controller;
 import com.example.schedule_develop.dto.ScheduleReq.ScheduleCreateReq;
 import com.example.schedule_develop.dto.ScheduleReq.SchedulePutReq;
 import com.example.schedule_develop.dto.ScheduleRes.ScheduleResData;
-import com.example.schedule_develop.dto.common.CommonResponse;
 import com.example.schedule_develop.dto.common.GlobalResponse;
 import com.example.schedule_develop.service.ScheduleService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_FAIL;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class ScheduleController {
     public ResponseEntity<GlobalResponse<?>> postApi(@Valid @RequestBody ScheduleCreateReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), "session fail"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_FAIL.getMessage()));
         } else {
             Long id = (Long) session.getAttribute("LOGIN_USER");
             return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(HttpStatus.CREATED.value(), "postResponse", req, id));
@@ -50,7 +51,7 @@ public class ScheduleController {
     public ResponseEntity<GlobalResponse<?>> putApi(@PathVariable Long scheduleID, @Valid @RequestBody SchedulePutReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), "session fail"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_FAIL.getMessage()));
         } else {
             System.out.println("login");
             Long id = (Long) session.getAttribute("LOGIN_USER");

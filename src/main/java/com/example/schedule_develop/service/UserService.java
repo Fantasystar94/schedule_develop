@@ -1,13 +1,12 @@
 package com.example.schedule_develop.service;
 
-import com.example.schedule_develop.config.UserNotFoundException;
-import com.example.schedule_develop.dto.ScheduleRes.ScheduleResData;
+import com.example.schedule_develop.config.passwordEncode.PasswordEncoder;
+import com.example.schedule_develop.config.exception.UserNotFoundException;
 import com.example.schedule_develop.dto.UserReq.UserCreateReq;
 import com.example.schedule_develop.dto.UserReq.UserPutReq;
 import com.example.schedule_develop.dto.UserRes.UserDelRes;
 import com.example.schedule_develop.dto.UserRes.UserResData;
 import com.example.schedule_develop.dto.common.GlobalResponse;
-import com.example.schedule_develop.entity.Schedule;
 import com.example.schedule_develop.entity.User;
 import com.example.schedule_develop.repository.ScheduleRepository;
 import com.example.schedule_develop.repository.UserRepository;
@@ -15,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,8 +21,10 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final PasswordEncoder passwordEncoder;
     public GlobalResponse<UserResData> create(int status, String message, UserCreateReq req) {
-        User user = new User(req.getUserName(),req.getEmail(),req.getPassword());
+        String encodePassword = passwordEncoder.encode(req.getPassword());
+        User user = new User(req.getUserName(),req.getEmail(),encodePassword);
         userRepository.save(user);
         UserResData data = new UserResData(
                 user.getId(),

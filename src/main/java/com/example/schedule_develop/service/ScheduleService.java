@@ -1,8 +1,8 @@
 package com.example.schedule_develop.service;
 
-import com.example.schedule_develop.config.ErrorCode;
-import com.example.schedule_develop.config.ScheduleNotFoundException;
-import com.example.schedule_develop.config.UserNotFoundException;
+import com.example.schedule_develop.config.enums.ErrorCode;
+import com.example.schedule_develop.config.exception.ScheduleNotFoundException;
+import com.example.schedule_develop.config.exception.UserNotFoundException;
 import com.example.schedule_develop.dto.ScheduleReq.ScheduleCreateReq;
 import com.example.schedule_develop.dto.ScheduleReq.SchedulePutReq;
 import com.example.schedule_develop.dto.ScheduleRes.*;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.schedule_develop.config.ErrorCode.SCHEDULE_NOT_FOUND;
+import static com.example.schedule_develop.config.enums.ErrorCode.SCHEDULE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -111,6 +111,6 @@ public class ScheduleService {
 
     //로그인 감지 실패시 공통 기능 C U D 에서 공통사용
     public GlobalResponse<Void> sessionFail(int status, String message) {
-        return GlobalResponse.fail(status, "로그인에 실패했습니다.");
+        return GlobalResponse.fail(status, message);
     }
 }
