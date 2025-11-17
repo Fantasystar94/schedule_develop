@@ -12,4 +12,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleException(IllegalStateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("요청 오류 : " + e.getMessage());
     }
+
 }

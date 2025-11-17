@@ -5,11 +5,13 @@ import com.example.schedule_develop.dto.UserReq.UserLoginReq;
 import com.example.schedule_develop.dto.UserReq.UserPutReq;
 import com.example.schedule_develop.dto.UserRes.UserDelRes;
 import com.example.schedule_develop.dto.UserRes.UserResData;
+import com.example.schedule_develop.dto.UserRes.UserResTotalData;
 import com.example.schedule_develop.dto.common.GlobalResponse;
 import com.example.schedule_develop.entity.User;
 import com.example.schedule_develop.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/schedule_Develop/users")
-    public ResponseEntity<GlobalResponse<UserResData>> postApi(@RequestBody UserCreateReq req) {
+    public ResponseEntity<GlobalResponse<UserResData>> postApi(@Valid @RequestBody UserCreateReq req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(HttpStatus.CREATED.value(),"postResponse",req));
     }
 
@@ -41,7 +43,7 @@ public class UserController {
     }
 
     @PutMapping("/schedule_Develop/users/{id}")
-    public ResponseEntity<GlobalResponse<UserResData>> putApi(@PathVariable(required = false) Long id, @RequestBody UserPutReq req) {
+    public ResponseEntity<GlobalResponse<UserResData>> putApi(@PathVariable(required = false) Long id,@Valid @RequestBody UserPutReq req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.put(HttpStatus.CREATED.value(),"putResponse", id, req));
     }
 
@@ -51,7 +53,7 @@ public class UserController {
     }
 
     @PostMapping("/schedule_Develop/users/login")
-    public ResponseEntity<GlobalResponse<UserResData>> login(@RequestBody UserLoginReq req, HttpServletRequest request) {
+    public ResponseEntity<GlobalResponse<UserResData>> login(@Valid @RequestBody UserLoginReq req, HttpServletRequest request) {
 
         try{
             GlobalResponse<UserResData> user = userService.login(req.getEmail(),req.getPassword());
@@ -63,6 +65,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 
         }
+    }
+
+    @PostMapping("/schedule_Develop/users/logout")
+    public ResponseEntity<GlobalResponse<Void>> logout(@RequestBody UserLoginReq req, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        } else {
+            return ResponseEntity.ok(new GlobalResponse<>(HttpStatus.UNAUTHORIZED.value(),"로그인 되지 않은 상태입니다.",null));
+        }
+        return ResponseEntity.ok(new GlobalResponse<>(HttpStatus.OK.value(),"logoutSuccess",null));
     }
 
 }
