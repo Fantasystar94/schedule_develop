@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
-import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_FAIL;
 import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_REQUIRED;
 
 @Slf4j
@@ -26,7 +23,6 @@ import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_REQUIRED
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
-
 
     @PostMapping
     public ResponseEntity<GlobalResponse<?>> postApi(@Valid @RequestBody ScheduleCreateReq req, HttpServletRequest request) {
@@ -55,7 +51,6 @@ public class ScheduleController {
         if (session == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_REQUIRED.getMessage()));
         } else {
-            System.out.println("login");
             Long id = (Long) session.getAttribute("LOGIN_USER");
             return ResponseEntity.status(HttpStatus.OK).body(scheduleService.put(HttpStatus.OK.value(), "putResponse", scheduleID, id, req));
         }

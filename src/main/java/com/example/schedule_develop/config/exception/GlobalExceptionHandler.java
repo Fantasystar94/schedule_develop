@@ -8,12 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-//
-//    @ExceptionHandler(IllegalStateException.class)
-//    public ResponseEntity<String> handleException(IllegalStateException e) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("요청 오류 : " + e.getMessage());
-//    }
-//    not Found 상속구조... notFoundException -> schedue,user,comment...
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionResponse> notFoundException(NotFoundException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getStatus(), e.getMessage()));
@@ -28,4 +23,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> loginFailException(LoginFailException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ExceptionResponse(e.getStatus(), e.getMessage()));
     }
+
 }
