@@ -17,11 +17,11 @@ public class GlobalResponse<T> {
         return new GlobalResponse<>(status, message, data);
     }
     //GlobalResponse 실패시 static 생성자
-    public static <T> GlobalResponse<T> fail(int status, String message) {
+    public static GlobalResponse<Void> fail(int status, String message) {
         return new GlobalResponse<>(status, message, null);
     }
     //GlobalResponse 데이터 없는 성공요청 static 생성자
-    public static <T> GlobalResponse<T> successNodata(int status, String message) {
+    public static GlobalResponse<Void> successNodata(int status, String message) {
         return new GlobalResponse<>(status, message, null);
     }
 

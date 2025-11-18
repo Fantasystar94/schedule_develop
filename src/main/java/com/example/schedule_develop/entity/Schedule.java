@@ -25,7 +25,7 @@ public class Schedule extends BaseDateEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false) // optioanl = false => null일수 없다.
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public Schedule(String title, String content, User user) {

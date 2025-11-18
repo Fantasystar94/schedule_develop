@@ -1,6 +1,5 @@
 package com.example.schedule_develop.dto.UserRes;
 
-import com.example.schedule_develop.dto.common.CommonResponse;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

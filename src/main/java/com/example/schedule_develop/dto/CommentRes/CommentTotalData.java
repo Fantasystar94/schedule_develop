@@ -1,13 +1,15 @@
-package com.example.schedule_develop.dto.ScheduleRes;
+package com.example.schedule_develop.dto.CommentRes;
 
+import com.example.schedule_develop.dto.ScheduleRes.ScheduleResData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class ScheduleResData {
+public class CommentTotalData<T> {
     private final Long id;
     private final String userName;
     private final String email;
@@ -15,4 +17,5 @@ public class ScheduleResData {
     private final String content;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final List<T> comments;
 }

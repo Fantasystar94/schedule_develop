@@ -1,5 +1,6 @@
 package com.example.schedule_develop.service;
 
+import com.example.schedule_develop.config.exception.LoginFailException;
 import com.example.schedule_develop.config.passwordEncode.PasswordEncoder;
 import com.example.schedule_develop.config.exception.UserNotFoundException;
 import com.example.schedule_develop.dto.UserReq.UserCreateReq;
@@ -13,15 +14,20 @@ import com.example.schedule_develop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_FAIL;
+import static com.example.schedule_develop.config.enums.ErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final ScheduleRepository scheduleRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Transactional
     public GlobalResponse<UserResData> create(int status, String message, UserCreateReq req) {
         String encodePassword = passwordEncoder.encode(req.getPassword());
         User user = new User(req.getUserName(),req.getEmail(),encodePassword);
@@ -50,9 +56,10 @@ public class UserService {
         return new GlobalResponse<>(status, message, userRes);
     }
 
+    @Transactional(readOnly = true)
     public GlobalResponse<UserResData> findDetail(int status, String message, Long id) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("없는 유저 아이디 입니다.")); //예외 발생부분.
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(USER_NOT_FOUND)); //예외 발생부분.
 
         UserResData data = new UserResData(
                 user.getId(),
@@ -64,12 +71,15 @@ public class UserService {
         return new GlobalResponse<>(status, message, data);
     }
 
+    @Transactional
     public GlobalResponse<UserResData> put(int status, String message, Long id, UserPutReq req) {
 
-        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("없는 유저 아이디 입니다."));
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(USER_NOT_FOUND));
 
         user.update(req.getUserName(), req.getEmail());
-        System.out.println(req.getUserName());
+        if(!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new UserNotFoundException(LOGIN_FAIL);
+        }
         userRepository.save(user);
         UserResData data = new UserResData(
                 user.getId(),
@@ -81,8 +91,9 @@ public class UserService {
         return new GlobalResponse<>(status, message, data);
     }
 
+    @Transactional
     public GlobalResponse<UserDelRes> delete(int status, String message, Long id) {
-        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("없는 유저 아이디 입니다."));
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(USER_NOT_FOUND));
         if(userRepository.existsById(user.getId())) {
             userRepository.deleteById(user.getId());
         }
@@ -91,7 +102,7 @@ public class UserService {
     }
 
     public GlobalResponse<UserResData> login(String email, String password) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("이메일 혹은 비밀번호가 일치하지 않습니다."));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new LoginFailException(LOGIN_FAIL));
         UserResData data = new UserResData(
                 user.getId(),
                 user.getUserName(),
@@ -99,8 +110,8 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
-        if(!user.getPassword().equals(password)) {
-            throw new UserNotFoundException("이메일 혹은 비밀번호가 일치하지 않습니다.");
+        if(!passwordEncoder.matches(password,user.getPassword())) {
+            throw new LoginFailException(LOGIN_FAIL);
         }
 
         return new GlobalResponse<>(HttpStatus.OK.value(),"loginSuccessResponse",data);

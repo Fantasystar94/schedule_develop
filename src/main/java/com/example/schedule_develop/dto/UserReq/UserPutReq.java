@@ -8,14 +8,15 @@ import lombok.Getter;
 @Getter
 public class UserPutReq {
     @NotBlank
-    @Min(4)
     private String userName;
     @NotBlank
     @Email
     private String email;
-    public UserPutReq(String userName, String email) {
-
+    @NotBlank
+    private final String password;
+    public UserPutReq(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
+        this.password = password;
     }
 }

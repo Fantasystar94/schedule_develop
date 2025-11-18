@@ -17,41 +17,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_FAIL;
+import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_REQUIRED;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/schedules")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
 
-    @PostMapping("/schedule_Develop/schedules")
+    @PostMapping
     public ResponseEntity<GlobalResponse<?>> postApi(@Valid @RequestBody ScheduleCreateReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_FAIL.getMessage()));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_REQUIRED.getMessage()));
         } else {
             Long id = (Long) session.getAttribute("LOGIN_USER");
             return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(HttpStatus.CREATED.value(), "postResponse", req, id));
         }
     }
 
-    @GetMapping("/schedule_Develop/schedules")
+    @GetMapping
     public ResponseEntity<GlobalResponse<List<ScheduleResData>>> getApi() {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll(HttpStatus.OK.value(), "getResponse"));
     }
 
-    @GetMapping("/schedule_Develop/schedules/{scheduleID}")
+    @GetMapping("/{scheduleID}")
     public ResponseEntity<GlobalResponse<?>> getApiDetail(@PathVariable(required = false) Long scheduleID) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findDetail(HttpStatus.OK.value(), "getResponse", scheduleID));
     }
 
-    @PutMapping("/schedule_Develop/schedules/{scheduleID}")
+    @PutMapping("/{scheduleID}")
     public ResponseEntity<GlobalResponse<?>> putApi(@PathVariable Long scheduleID, @Valid @RequestBody SchedulePutReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_FAIL.getMessage()));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_REQUIRED.getMessage()));
         } else {
             System.out.println("login");
             Long id = (Long) session.getAttribute("LOGIN_USER");
@@ -59,7 +61,7 @@ public class ScheduleController {
         }
     }
 
-    @DeleteMapping("/schedule_Develop/schedules/{scheduleID}")
+    @DeleteMapping("/{scheduleID}")
     public ResponseEntity<GlobalResponse<Void>> deleteApi(@PathVariable Long scheduleID) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.delete(HttpStatus.NO_CONTENT.value(), "DeleteResponse", scheduleID));
     }

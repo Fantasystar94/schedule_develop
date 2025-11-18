@@ -1,13 +1,12 @@
 package com.example.schedule_develop.controller;
 
+import com.example.schedule_develop.config.exception.LoginFailException;
 import com.example.schedule_develop.dto.UserReq.UserCreateReq;
 import com.example.schedule_develop.dto.UserReq.UserLoginReq;
 import com.example.schedule_develop.dto.UserReq.UserPutReq;
 import com.example.schedule_develop.dto.UserRes.UserDelRes;
 import com.example.schedule_develop.dto.UserRes.UserResData;
-import com.example.schedule_develop.dto.UserRes.UserResTotalData;
 import com.example.schedule_develop.dto.common.GlobalResponse;
-import com.example.schedule_develop.entity.User;
 import com.example.schedule_develop.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -23,36 +22,37 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/schedule_Develop/users")
+    @PostMapping
     public ResponseEntity<GlobalResponse<UserResData>> postApi(@Valid @RequestBody UserCreateReq req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(HttpStatus.CREATED.value(),"postResponse",req));
     }
 
-    @GetMapping("/schedule_Develop/users")
+    @GetMapping
     public ResponseEntity<GlobalResponse<List<UserResData>>> getApi() {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.findAll(HttpStatus.CREATED.value(),"getResponse"));
     }
 
-    @GetMapping("/schedule_Develop/users/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<GlobalResponse<UserResData>> getApiDetail(@PathVariable(required = false) Long id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.findDetail(HttpStatus.CREATED.value(),"getResponse", id));
     }
 
-    @PutMapping("/schedule_Develop/users/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<GlobalResponse<UserResData>> putApi(@PathVariable(required = false) Long id,@Valid @RequestBody UserPutReq req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.put(HttpStatus.CREATED.value(),"putResponse", id, req));
     }
 
-    @DeleteMapping("/schedule_Develop/users/{id}")
-    public ResponseEntity<GlobalResponse<UserDelRes>> putApi(@PathVariable(required = false) Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GlobalResponse<UserDelRes>> deleteApi(@PathVariable(required = false) Long id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.delete(HttpStatus.NO_CONTENT.value(),"deleteResponse", id));
     }
 
-    @PostMapping("/schedule_Develop/users/login")
+    @PostMapping("/login")
     public ResponseEntity<GlobalResponse<UserResData>> login(@Valid @RequestBody UserLoginReq req, HttpServletRequest request) {
 
         try{
@@ -60,13 +60,13 @@ public class UserController {
             HttpSession session = request.getSession(true);
             session.setAttribute("LOGIN_USER",user.getData().getId());
             return ResponseEntity.status(HttpStatus.OK).body(user);
-        } catch (IllegalStateException e) {
+        } catch (LoginFailException e) {
             GlobalResponse<UserResData> error = new GlobalResponse<>(HttpStatus.UNAUTHORIZED.value(),e.getMessage(),null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }
 
-    @PostMapping("/schedule_Develop/users/logout")
+    @PostMapping("/logout")
     public ResponseEntity<GlobalResponse<Void>> logout(@RequestBody UserLoginReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {

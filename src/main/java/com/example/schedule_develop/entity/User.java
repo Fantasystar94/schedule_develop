@@ -21,6 +21,8 @@ public class User extends BaseDateEntity {
     private String email;
     @Column(nullable = false)
     private String password;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
 
     public User(String userName, String email, String password) {
         super();

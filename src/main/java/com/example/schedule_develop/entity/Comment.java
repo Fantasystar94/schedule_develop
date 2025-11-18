@@ -11,16 +11,21 @@ import lombok.NoArgsConstructor;
 public class Comment extends BaseDateEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
     @Column(nullable = false)
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="schedule_id",nullable = false)
     private Schedule schedule;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id",nullable = false)
+    private User user;
 
-    public Comment(String content) {
+    public Comment(String content, Schedule schedule, User user) {
         super();
         this.content = content;
+        this.schedule = schedule;
+        this.user = user;
     }
 
     public void update(String content) {
