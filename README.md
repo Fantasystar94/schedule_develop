@@ -14,7 +14,7 @@ MYSQL
 Lombok
 Postman
 # 구조
-Controller -> Serivce -> Repository 3계층 구조로 작업되었습니다.
-User -> Schedule -> Comment 엔티티구조로 되어있고,
-Schedule은 UserId 를 외래키로, Comment 는 UserId, ScheduleId 를 외래키로 가집니다.
-Schedule은 User와 양방향으로, Comment는 Schedule과 양방향 매핑 되어 있습니다.
+### Controller -> Serivce -> Repository 3계층 구조로 작업되었습니다.
+### User -> Schedule -> Comment 엔티티구조로 되어있고,
+### Schedule은 UserId 를 외래키로, Comment 는 UserId, ScheduleId 를 외래키로 가집니다.
+### Schedule은 User와 양방향으로, Comment는 Schedule과 양방향 매핑 되어 있습니다.
