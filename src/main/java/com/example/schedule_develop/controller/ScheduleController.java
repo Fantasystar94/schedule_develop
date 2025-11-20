@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+
 import static com.example.schedule_develop.config.enums.ErrorCode.LOGIN_REQUIRED;
 
 @Slf4j
@@ -27,12 +29,8 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<GlobalResponse<?>> postApi(@Valid @RequestBody ScheduleCreateReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_REQUIRED.getMessage()));
-        } else {
-            Long id = (Long) session.getAttribute("LOGIN_USER");
-            return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(HttpStatus.CREATED.value(), "postResponse", req, id));
-        }
+        Long id = (Long) session.getAttribute("LOGIN_USER");
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(HttpStatus.CREATED.value(), "postResponse", req, id));
     }
 
     @GetMapping
@@ -48,18 +46,13 @@ public class ScheduleController {
     @PutMapping("/{scheduleID}")
     public ResponseEntity<GlobalResponse<?>> putApi(@PathVariable Long scheduleID, @Valid @RequestBody SchedulePutReq req, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(scheduleService.sessionFail(HttpStatus.UNAUTHORIZED.value(), LOGIN_REQUIRED.getMessage()));
-        } else {
-            Long id = (Long) session.getAttribute("LOGIN_USER");
-            return ResponseEntity.status(HttpStatus.OK).body(scheduleService.put(HttpStatus.OK.value(), "putResponse", scheduleID, id, req));
-        }
+        Long id = (Long) session.getAttribute("LOGIN_USER");
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.put(HttpStatus.OK.value(), "putResponse", scheduleID, id, req));
     }
 
     @DeleteMapping("/{scheduleID}")
     public ResponseEntity<GlobalResponse<Void>> deleteApi(@PathVariable Long scheduleID) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.delete(HttpStatus.NO_CONTENT.value(), "DeleteResponse", scheduleID));
     }
-
 
 }

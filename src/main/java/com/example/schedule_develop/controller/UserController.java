@@ -54,7 +54,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<GlobalResponse<UserResData>> login(@Valid @RequestBody UserLoginReq req, HttpServletRequest request) {
-
         try{
             GlobalResponse<UserResData> user = userService.login(req.getEmail(),req.getPassword());
             HttpSession session = request.getSession(true);
@@ -68,12 +67,6 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<GlobalResponse<Void>> logout(@RequestBody UserLoginReq req, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        } else {
-            return ResponseEntity.ok(new GlobalResponse<>(HttpStatus.UNAUTHORIZED.value(),"로그인 되지 않은 상태입니다.",null));
-        }
         return ResponseEntity.ok(new GlobalResponse<>(HttpStatus.OK.value(),"logoutSuccess",null));
     }
 
