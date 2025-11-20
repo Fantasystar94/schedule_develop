@@ -4,6 +4,7 @@ import com.example.schedule_develop.config.enums.ErrorCode;
 import com.example.schedule_develop.config.exception.LoginFailException;
 import com.example.schedule_develop.config.exception.UnauthorizedException;
 import com.example.schedule_develop.dto.common.GlobalResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,9 +44,11 @@ public class LoginCheckFilter implements Filter {
                 res.setCharacterEncoding("UTF-8");
                 res.setContentType("application/json");
 
-                String json = "{ \"status\": 401, \"message\": \"" + e.getMessage() + "\" }";
+                GlobalResponse<Void> json = GlobalResponse.fail(e.getStatus(), e.getMessage());
 
-                res.getWriter().write(json);
+                ObjectMapper mapper = new ObjectMapper();
+                String body = mapper.writeValueAsString(json);
+                res.getWriter().write(body);
                 res.getWriter().flush();
                 return;
             }
